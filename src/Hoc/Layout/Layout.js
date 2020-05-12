@@ -7,9 +7,7 @@ const Layout = (props) => {
   return (
     <div>
       <Navbar />
-      <div className="container my-5 md-4 col-md-7 mx-auto">
-        {props.children}
-      </div>
+      <div className="container my-5 col-md-8 mx-auto">{props.children}</div>
     </div>
   );
 };
