@@ -4,9 +4,8 @@ const Button = (props) => {
   return (
     <button
       type="button"
-      className={`btn btn-` + props.class}
+      className={`m-1 btn btn-outline-` + props.colorType}
       onClick={props.clicked}
-      disabled={!props.valid}
     >
       {props.children}
     </button>
