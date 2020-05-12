@@ -6,7 +6,11 @@ const Tasks = (props) => {
   return (
     <div className="col-12 mx-auto mt-5">
       {props.tasks.map((task) => (
-        <Task key={task.id} task={task.taskToDo} />
+        <Task
+          key={task.id}
+          task={task.taskToDo}
+          remove={() => props.onRemove(task.id)}
+        />
       ))}
     </div>
   );

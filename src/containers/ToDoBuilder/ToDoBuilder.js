@@ -21,6 +21,11 @@ class ToDoBuilder extends Component {
     this.setState({ userInput: userInput });
   };
 
+  removeTaskHandler = (taskId) => {
+    const updatedTasks = this.state.tasks.filter((task) => task.id !== taskId);
+    this.setState({ tasks: updatedTasks });
+  };
+
   render() {
     return (
       <Layout>
@@ -31,7 +36,10 @@ class ToDoBuilder extends Component {
           valid={this.state.valid}
           taskLength={this.state.tasks.length}
         />
-        <Tasks tasks={this.state.tasks} />
+        <Tasks
+          tasks={this.state.tasks}
+          onRemove={(taskId) => this.removeTaskHandler(taskId)}
+        />
       </Layout>
     );
   }
