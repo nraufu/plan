@@ -7,15 +7,17 @@ const Task = (props) => {
     <div className="card m-2 bg-light">
       <div className="card-body">
         <p className="card-text text-body">{props.task}</p>
-        <Button colorType="dark">
-          <i className="fa fa-thumbs-o-up"></i>
-        </Button>
-        <Button colorType="danger">
-          <i className="fa fa-trash"></i>
-        </Button>
-        <Button colorType="warning">
-          <i className="fa fa-pencil"></i>
-        </Button>
+        <div className=" text-center">
+          <Button colorType="dark">
+            <i className="fa fa-thumbs-o-up"></i>
+          </Button>
+          <Button colorType="danger" clicked={props.remove}>
+            <i className="fa fa-trash"></i>
+          </Button>
+          <Button colorType="warning">
+            <i className="fa fa-pencil"></i>
+          </Button>
+        </div>
       </div>
     </div>
   );
