@@ -9,7 +9,11 @@ class ToDoBuilder extends Component {
 
   buttonClickedHandler = () => {
     const tasks = this.state.tasks;
-    tasks.push({ id: tasks.length + 1, taskToDo: this.state.userInput });
+    tasks.push({
+      id: Math.random() * 1000,
+      taskToDo: this.state.userInput,
+      done: false,
+    });
     this.setState({ tasks: tasks, userInput: "" });
   };
 
@@ -26,9 +30,17 @@ class ToDoBuilder extends Component {
     this.setState({ tasks: updatedTasks });
   };
 
+  onCompleteHandler = (taskId) => {
+    const tasks = [...this.state.tasks];
+    const taskIndex = tasks.findIndex((task) => task.id === taskId);
+    tasks[taskIndex] = { ...tasks[taskIndex] };
+    tasks[taskIndex].done = !tasks[taskIndex].done;
+    this.setState({ tasks: tasks });
+  };
+
   render() {
     return (
-      <Layout>
+      <Layout tasks={this.state.tasks}>
         <InputBar
           value={this.state.userInput}
           changed={this.onInputChangeHandler}
@@ -38,7 +50,8 @@ class ToDoBuilder extends Component {
         />
         <Tasks
           tasks={this.state.tasks}
-          onRemove={(taskId) => this.removeTaskHandler(taskId)}
+          onRemove={this.removeTaskHandler}
+          onComplete={this.onCompleteHandler}
         />
       </Layout>
     );

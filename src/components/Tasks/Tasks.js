@@ -10,6 +10,8 @@ const Tasks = (props) => {
           key={task.id}
           task={task.taskToDo}
           remove={() => props.onRemove(task.id)}
+          complete={() => props.onComplete(task.id)}
+          done={task.done}
         />
       ))}
     </div>
