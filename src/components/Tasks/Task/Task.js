@@ -11,13 +11,18 @@ const Task = (props) => {
       <div className="card-body">
         <p className="card-text text-body">{props.task}</p>
         <div className=" text-center">
-          <Button colorType="dark" clicked={props.complete}>
+          <Button colorType="info" clicked={props.complete}>
             <i className={doneClasses}></i>
           </Button>
           <Button colorType="danger" clicked={props.remove}>
             <i className="fa fa-trash"></i>
           </Button>
-          <Button colorType="warning">
+          <Button
+            clicked={props.edit}
+            colorType="warning"
+            modalToggler="modal"
+            target="#staticBackdrop"
+          >
             <i className="fa fa-pencil"></i>
           </Button>
         </div>
