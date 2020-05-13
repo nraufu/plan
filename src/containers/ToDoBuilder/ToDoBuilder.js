@@ -3,14 +3,20 @@ import React, { Component } from "react";
 import Layout from "../../Hoc/Layout/Layout";
 import Tasks from "../../components/Tasks/Tasks";
 import InputBar from "./../../components/UI/InputBar/InputBar";
+import Modal from "../Modal/Modal";
 
 class ToDoBuilder extends Component {
-  state = { userInput: "", tasks: [], valid: false };
+  state = {
+    userInput: "",
+    tasks: [],
+    valid: false,
+    modalId: "",
+    modalDetail: "",
+  };
 
   buttonClickedHandler = () => {
     const tasks = this.state.tasks;
     tasks.push({
-      id: Math.random() * 1000,
       taskToDo: this.state.userInput,
       done: false,
     });
@@ -25,16 +31,32 @@ class ToDoBuilder extends Component {
     this.setState({ userInput: userInput });
   };
 
-  removeTaskHandler = (taskId) => {
-    const updatedTasks = this.state.tasks.filter((task) => task.id !== taskId);
+  removeTaskHandler = (taskIndex) => {
+    const updatedTasks = this.state.tasks.filter(
+      (task, index) => index !== taskIndex
+    );
     this.setState({ tasks: updatedTasks });
   };
 
-  onCompleteHandler = (taskId) => {
+  onCompleteHandler = (taskIndex) => {
     const tasks = [...this.state.tasks];
-    const taskIndex = tasks.findIndex((task) => task.id === taskId);
     tasks[taskIndex] = { ...tasks[taskIndex] };
     tasks[taskIndex].done = !tasks[taskIndex].done;
+    this.setState({ tasks: tasks });
+  };
+
+  viewDetailsHandler = (taskIndex) => {
+    const tasks = [...this.state.tasks];
+    this.setState({
+      modalDetail: tasks[taskIndex].taskToDo,
+      modalId: taskIndex,
+    });
+  };
+
+  saveChangesHandler = (newChange) => {
+    let tasks = [...this.state.tasks];
+    tasks[this.state.modalId] = { ...tasks[this.state.modalId] };
+    tasks[this.state.modalId].taskToDo = newChange;
     this.setState({ tasks: tasks });
   };
 
@@ -52,6 +74,11 @@ class ToDoBuilder extends Component {
           tasks={this.state.tasks}
           onRemove={this.removeTaskHandler}
           onComplete={this.onCompleteHandler}
+          onEdit={this.viewDetailsHandler}
+        />
+        <Modal
+          taskInfo={this.state.modalDetail}
+          onSave={this.saveChangesHandler}
         />
       </Layout>
     );

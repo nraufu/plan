@@ -5,12 +5,13 @@ import Task from "./Task/Task";
 const Tasks = (props) => {
   return (
     <div className="col-12 mx-auto mt-5">
-      {props.tasks.map((task) => (
+      {props.tasks.map((task, index) => (
         <Task
-          key={task.id}
+          key={index}
           task={task.taskToDo}
-          remove={() => props.onRemove(task.id)}
-          complete={() => props.onComplete(task.id)}
+          remove={() => props.onRemove(index)}
+          complete={() => props.onComplete(index)}
+          edit={() => props.onEdit(index)}
           done={task.done}
         />
       ))}
