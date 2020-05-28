@@ -1,7 +1,7 @@
 import React from "react";
 
 const taskDone = (prop) => {
-  const done = prop.tasks.filter((task) => task.done === true);
+  const done = prop.tasks.filter((task) => task.body.done === true);
   return done.length;
 };
 

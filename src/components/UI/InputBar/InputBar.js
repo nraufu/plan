@@ -6,11 +6,7 @@ const InputBar = (props) => {
       <input
         type="text"
         className="form-control shadow-none"
-        placeholder={
-          props.taskLength >= 1
-            ? "Add another task"
-            : "Add the task you plan to do"
-        }
+        placeholder="Add the task you plan to do"
         onChange={props.changed}
         value={props.value}
       />

@@ -4,6 +4,8 @@ import Layout from "../../Hoc/Layout/Layout";
 import Tasks from "../../components/Tasks/Tasks";
 import InputBar from "./../../components/UI/InputBar/InputBar";
 import Modal from "../Modal/Modal";
+import axios from "../../axios";
+import Spinner from "../../components/UI/Spinner/Spinner";
 
 class ToDoBuilder extends Component {
   state = {
@@ -12,15 +14,30 @@ class ToDoBuilder extends Component {
     valid: false,
     modalId: "",
     modalDetail: "",
+    loading: true,
   };
 
-  buttonClickedHandler = () => {
-    const tasks = this.state.tasks;
-    tasks.push({
+  getTasks = async () => {
+    const response = await axios.get("/tasks.json");
+    const tasks = [];
+    for (const key in response.data) {
+      tasks.unshift({ id: key, body: response.data[key] });
+    }
+    return tasks;
+  };
+
+  async componentDidMount() {
+    const tasks = await this.getTasks();
+    this.setState({ tasks: tasks, loading: false });
+  }
+
+  buttonClickedHandler = async () => {
+    await axios.post("/tasks.json", {
       taskToDo: this.state.userInput,
       done: false,
     });
-    this.setState({ tasks: tasks, userInput: "" });
+    const tasks = await this.getTasks();
+    this.setState({ userInput: "", tasks: tasks });
   };
 
   onInputChangeHandler = (event) => {
@@ -33,34 +50,54 @@ class ToDoBuilder extends Component {
 
   removeTaskHandler = (taskIndex) => {
     const updatedTasks = this.state.tasks.filter(
-      (task, index) => index !== taskIndex
+      (task) => task.id !== taskIndex
     );
+    axios.delete(`/tasks/${taskIndex}.json`);
     this.setState({ tasks: updatedTasks });
   };
 
   onCompleteHandler = (taskIndex) => {
     const tasks = [...this.state.tasks];
-    tasks[taskIndex] = { ...tasks[taskIndex] };
-    tasks[taskIndex].done = !tasks[taskIndex].done;
+    const index = tasks.findIndex((task) => task.id === taskIndex);
+    tasks[index] = { ...tasks[index] };
+    tasks[index].body.done = !tasks[index].body.done;
+    const { body } = tasks[index];
+    axios.put(`/tasks/${tasks[index].id}.json`, body);
     this.setState({ tasks: tasks });
   };
 
   viewDetailsHandler = (taskIndex) => {
     const tasks = [...this.state.tasks];
+    const index = tasks.findIndex((task) => task.id === taskIndex);
     this.setState({
-      modalDetail: tasks[taskIndex].taskToDo,
+      modalDetail: tasks[index].body.taskToDo,
       modalId: taskIndex,
     });
   };
 
   saveChangesHandler = (newChange) => {
-    let tasks = [...this.state.tasks];
-    tasks[this.state.modalId] = { ...tasks[this.state.modalId] };
-    tasks[this.state.modalId].taskToDo = newChange;
+    const tasks = [...this.state.tasks];
+    const index = tasks.findIndex((task) => task.id === this.state.modalId);
+    tasks[index] = { ...tasks[index] };
+    tasks[index].body.taskToDo = newChange;
+    const { body } = tasks[index];
+    axios.put(`/tasks/${tasks[index].id}.json`, body);
     this.setState({ tasks: tasks });
   };
 
   render() {
+    let tasks = <Spinner />;
+    if (!this.state.loading) {
+      tasks = (
+        <Tasks
+          tasks={this.state.tasks}
+          onRemove={this.removeTaskHandler}
+          onComplete={this.onCompleteHandler}
+          onEdit={this.viewDetailsHandler}
+        />
+      );
+    }
+
     return (
       <Layout tasks={this.state.tasks}>
         <InputBar
@@ -68,14 +105,8 @@ class ToDoBuilder extends Component {
           changed={this.onInputChangeHandler}
           btnClicked={this.buttonClickedHandler}
           valid={this.state.valid}
-          taskLength={this.state.tasks.length}
         />
-        <Tasks
-          tasks={this.state.tasks}
-          onRemove={this.removeTaskHandler}
-          onComplete={this.onCompleteHandler}
-          onEdit={this.viewDetailsHandler}
-        />
+        {tasks}
         <Modal
           taskInfo={this.state.modalDetail}
           onSave={this.saveChangesHandler}
