@@ -1,13 +1,13 @@
 import React from "react";
 
-const taskDone = (prop) => {
-  const done = prop.tasks.filter((task) => task.body.done === true);
-  return done.length;
-};
+// const taskDone = (prop) => {
+//   const done = prop.tasks.filter((task) => task.body.done === true);
+//   return done.length;
+// };
 
 const Navbar = (props) => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
       <a className="navbar-brand" href="/">
         <span role="img" aria-label="emoji">
           📅
@@ -28,7 +28,7 @@ const Navbar = (props) => {
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
           <li className="nav-link nav-item active">
-            <span className="badge badge-secondary">{taskDone(props)}</span>{" "}
+            {/* <span className="badge badge-secondary">{taskDone(props)}</span>{" "} */}
             Done
           </li>
         </ul>

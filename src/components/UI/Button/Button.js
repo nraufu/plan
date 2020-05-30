@@ -8,6 +8,7 @@ const Button = (props) => {
       onClick={props.clicked}
       data-toggle={props.modalToggler}
       data-target={props.target}
+      disabled={props.disabled}
     >
       {props.children}
     </button>

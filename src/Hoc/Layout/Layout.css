@@ -3,6 +3,16 @@
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
+form {
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px #1f1f1f80;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
 .no-gutter>[class*='col-'] {
     padding-right: 5px;
     padding-left: 5px;
