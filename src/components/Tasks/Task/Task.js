@@ -4,12 +4,20 @@ import Button from "./../../UI/Button/Button";
 
 const Task = (props) => {
   let doneClasses = "fa fa-thumbs-up";
-  if (!props.taskDetails.done) doneClasses = "fa fa-thumbs-o-up";
+  let strikeThroughClass = "strikeThrough";
+  if (!props.taskDetails.done) {
+    doneClasses = "fa fa-thumbs-o-up";
+    strikeThroughClass = "";
+  }
 
   return (
     <div className="card mb-3 bg-light">
       <div className="card-body">
-        <p className="card-text text-body">{props.taskDetails.taskToDo}</p>
+        <p className="card-text text-body">
+          <span className={strikeThroughClass}>
+            {props.taskDetails.taskToDo}
+          </span>
+        </p>
         <div className=" text-center">
           <Button colorType="info" clicked={props.complete}>
             <i className={doneClasses}></i>

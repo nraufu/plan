@@ -1,0 +1,16 @@
+export const ADD_TASK = 'ADD_TASK';
+export const DELETE_TASK = 'DELETE_TASK';
+export const EDIT_TASK = 'EDIT_TASK';
+export const TASK_COMPLETED_TOGGLE = 'TASK_COMPLETED_TOGGLE';
+export const VIEW_TASK_INFO = 'VIEW_TASK_INFO';
+
+export const FETCH_TASKS_START = 'FETCH_TASKS_START';
+export const FETCH_TASKS_SUCCESS = 'FETCH_TASKS_SUCCESS';
+export const FETCH_TASKS_FAIL = 'FETCH_TASKS_FAIL';
+
+export const AUTH_START = 'AUTH_START';
+export const AUTH_SUCCESS = 'AUTH_SUCCESS';
+export const AUTH_FAIL = ' AUTH_FAIL';
+export const AUTH_LOGOUT = 'AUTH_LOGOUT';
+
+export const SET_AUTH_REDIRECT_PATH = 'SET_AUTH_REDIRECT_PATH';

@@ -15,7 +15,6 @@ const InputBar = (props) => {
           className="btn btn-outline-primary shadow-none"
           type="button"
           onClick={props.btnClicked}
-          disabled={!props.valid}
         >
           <i className="fa fa-plus"></i>
         </button>
