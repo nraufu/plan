@@ -1,9 +1,11 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import Input from "../../components/UI/Input/Input";
 import Button from "../../components/UI/Button/Button";
-import axios from "../../axios";
 import Spinner from "../../components/UI/Spinner/Spinner";
+import * as actions from "../../redux/actions/index";
 
 class Auth extends Component {
   state = {
@@ -38,8 +40,6 @@ class Auth extends Component {
     },
     isFormValid: false,
     isSignup: true,
-    error: "",
-    loading: false,
   };
 
   checkValidity = (value, rules) => {
@@ -86,7 +86,6 @@ class Auth extends Component {
 
   formSubmitHandler = (event) => {
     event.preventDefault();
-    this.setState({ loading: true });
     const userData = {};
     for (let formElementIdentifier in this.state.userForm) {
       userData[formElementIdentifier] = this.state.userForm[
@@ -98,30 +97,13 @@ class Auth extends Component {
       password: userData.password,
       returnSecureToken: true,
     };
-    let url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBocpT4UTOvMtflk3PhCCAPi7DAA5oMz6E";
-    if (!this.state.isSignup) {
-      url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBocpT4UTOvMtflk3PhCCAPi7DAA5oMz6E";
-    }
 
-    axios
-      .post(url, data)
-      .then((response) => {
-        localStorage.setItem("token", response.data.idToken);
-        localStorage.setItem("userId", response.data.localId);
-        this.props.history.replace("/toDo");
-      })
-      .catch((err) =>
-        this.setState({
-          error: err.response.data.error.message,
-          loading: false,
-        })
-      );
+    this.props.onAuth(data, this.state.isSignup);
+    this.props.onSetPath("/");
   };
 
   switchModeHandler = () => {
-    this.setState({ isSignup: !this.state.isSignup });
+    this.setState((prevState) => ({ isSignup: !prevState.isSignup }));
   };
 
   render() {
@@ -166,16 +148,44 @@ class Auth extends Component {
           Submit
         </Button>
 
-        <p style={{ textAlign: "center", color: "red" }}>{this.state.error}</p>
+        <p style={{ textAlign: "center", color: "red" }}>
+          {this.props.error ? this.props.error.message : null}
+        </p>
       </div>
     );
 
-    if (this.state.loading) {
+    if (this.props.loading) {
       form = <Spinner />;
     }
 
-    return <form className="col-md-6 mx-auto">{form}</form>;
+    let authRedirect = null;
+    if (this.props.isAuthenticated) {
+      authRedirect = <Redirect to={this.props.authRedirectPath} />;
+    }
+
+    return (
+      <div>
+        {authRedirect}
+        <form className="col-md-6 mx-auto">{form}</form>;
+      </div>
+    );
   }
 }
 
-export default Auth;
+const mapStateToProps = (state) => {
+  return {
+    error: state.auth.error,
+    loading: state.auth.loading,
+    isAuthenticated: state.auth.token !== null,
+    authRedirectPath: state.auth.authRedirectPath,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onAuth: (authData, isSignup) => dispatch(actions.auth(authData, isSignup)),
+    onSetPath: (path) => dispatch(actions.setAuthRedirectPath(path)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);

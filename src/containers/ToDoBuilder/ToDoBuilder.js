@@ -1,96 +1,71 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 
 import Layout from "../../Hoc/Layout/Layout";
 import Tasks from "../../components/Tasks/Tasks";
 import InputBar from "./../../components/UI/InputBar/InputBar";
 import Modal from "../Modal/Modal";
-import axios from "../../axios";
 import Spinner from "../../components/UI/Spinner/Spinner";
+import * as actions from "../../redux/actions/index";
 
 class ToDoBuilder extends Component {
   state = {
     userInput: "",
-    tasks: [],
-    valid: false,
-    modalId: "",
-    modalDetail: "",
-    loading: true,
   };
 
-  getTasks = async () => {
-    const response = await axios.get("/tasks.json");
-    const tasks = [];
-    for (const key in response.data) {
-      tasks.unshift({ id: key, body: response.data[key] });
-    }
-    return tasks;
-  };
-
-  async componentDidMount() {
-    const tasks = await this.getTasks();
-    this.setState({ tasks: tasks, loading: false });
+  componentDidMount() {
+    this.props.onTasksFetch(this.props.token, this.props.userId);
   }
 
-  buttonClickedHandler = async () => {
-    await axios.post("/tasks.json", {
-      taskToDo: this.state.userInput,
-      done: false,
-    });
-    const tasks = await this.getTasks();
-    this.setState({ userInput: "", tasks: tasks });
+  buttonClickedHandler = () => {
+    this.props.onAddTask(
+      {
+        taskToDo: this.state.userInput,
+        done: false,
+        userId: this.props.userId,
+      },
+      this.props.token,
+      this.props.userId
+    );
+    this.setState({ userInput: "" });
   };
 
   onInputChangeHandler = (event) => {
     let userInput = event.target.value;
-    userInput.length > 5
-      ? this.setState({ valid: true })
-      : this.setState({ valid: false });
     this.setState({ userInput: userInput });
   };
 
   removeTaskHandler = (taskIndex) => {
-    const updatedTasks = this.state.tasks.filter(
-      (task) => task.id !== taskIndex
-    );
-    axios.delete(`/tasks/${taskIndex}.json`);
-    this.setState({ tasks: updatedTasks });
+    this.props.onTaskRemove(taskIndex, this.props.tasks, this.props.token);
   };
 
   onCompleteHandler = (taskIndex) => {
-    const tasks = [...this.state.tasks];
-    const index = tasks.findIndex((task) => task.id === taskIndex);
-    tasks[index] = { ...tasks[index] };
-    tasks[index].body.done = !tasks[index].body.done;
-    const { body } = tasks[index];
-    axios.put(`/tasks/${tasks[index].id}.json`, body);
-    this.setState({ tasks: tasks });
+    this.props.onCompleteToggle(taskIndex, this.props.tasks, this.props.token);
   };
 
   viewDetailsHandler = (taskIndex) => {
-    const tasks = [...this.state.tasks];
+    const tasks = [...this.props.tasks];
     const index = tasks.findIndex((task) => task.id === taskIndex);
-    this.setState({
-      modalDetail: tasks[index].body.taskToDo,
-      modalId: taskIndex,
-    });
+    const taskDetails = tasks[index].body;
+    this.props.onTaskViewInfo(taskIndex, taskDetails);
   };
 
   saveChangesHandler = (newChange) => {
-    const tasks = [...this.state.tasks];
-    const index = tasks.findIndex((task) => task.id === this.state.modalId);
-    tasks[index] = { ...tasks[index] };
-    tasks[index].body.taskToDo = newChange;
-    const { body } = tasks[index];
-    axios.put(`/tasks/${tasks[index].id}.json`, body);
-    this.setState({ tasks: tasks });
+    this.props.onSaveEdit(
+      this.props.tasks,
+      this.props.taskId,
+      newChange,
+      this.props.token
+    );
   };
 
   render() {
     let tasks = <Spinner />;
-    if (!this.state.loading) {
+
+    if (!this.props.loading) {
       tasks = (
         <Tasks
-          tasks={this.state.tasks}
+          tasks={this.props.tasks}
           onRemove={this.removeTaskHandler}
           onComplete={this.onCompleteHandler}
           onEdit={this.viewDetailsHandler}
@@ -99,21 +74,45 @@ class ToDoBuilder extends Component {
     }
 
     return (
-      <Layout tasks={this.state.tasks}>
+      <Layout>
         <InputBar
           value={this.state.userInput}
           changed={this.onInputChangeHandler}
           btnClicked={this.buttonClickedHandler}
-          valid={this.state.valid}
         />
         {tasks}
-        <Modal
-          taskInfo={this.state.modalDetail}
-          onSave={this.saveChangesHandler}
-        />
+        <Modal taskInfo={this.props.task} onSave={this.saveChangesHandler} />
       </Layout>
     );
   }
 }
 
-export default ToDoBuilder;
+const mapPropsToState = (state) => {
+  return {
+    tasks: state.task.tasks,
+    taskId: state.task.taskId,
+    task: state.task.taskDetails.taskToDo,
+    loading: state.task.loading,
+    token: state.auth.token,
+    userId: state.auth.userId,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onTasksFetch: (token, userId) =>
+      dispatch(actions.fetchTasks(token, userId)),
+    onAddTask: (newTask, token, userId) =>
+      dispatch(actions.addTask(newTask, token, userId)),
+    onTaskRemove: (taskId, tasks, token) =>
+      dispatch(actions.deleteTask(taskId, tasks, token)),
+    onCompleteToggle: (taskId, tasks, token) =>
+      dispatch(actions.completeTaskToggle(taskId, tasks, token)),
+    onTaskViewInfo: (taskId, taskDetails) =>
+      dispatch(actions.viewTaskDetails(taskId, taskDetails)),
+    onSaveEdit: (tasks, taskId, changes, token) =>
+      dispatch(actions.editTask(tasks, taskId, changes, token)),
+  };
+};
+
+export default connect(mapPropsToState, mapDispatchToProps)(ToDoBuilder);
