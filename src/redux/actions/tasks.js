@@ -50,12 +50,10 @@ export const editTask = (tasks, taskId, changes, token) => {
     const updatedTasks = [...tasks];
     const index = updatedTasks.findIndex((task) => task.id === taskId);
     updatedTasks[index] = {
-      ...updatedTasks[index]
+      ...updatedTasks[index],
     };
     updatedTasks[index].body.taskToDo = changes;
-    const {
-      body
-    } = updatedTasks[index];
+    const { body } = updatedTasks[index];
     axios
       .put(`/tasks/${taskId}.json?auth=` + token, body)
       .then((res) => dispatch(editTaskComplete(updatedTasks)))
@@ -83,12 +81,10 @@ export const completeTaskToggle = (taskId, tasks, token) => {
     const updatedTasks = [...tasks];
     const index = updatedTasks.findIndex((task) => task.id === taskId);
     updatedTasks[index] = {
-      ...updatedTasks[index]
+      ...updatedTasks[index],
     };
     updatedTasks[index].body.done = !updatedTasks[index].body.done;
-    const {
-      body
-    } = tasks[index];
+    const { body } = tasks[index];
     axios
       .put(`/tasks/${taskId}.json?auth=` + token, body)
       .then((res) => {
@@ -121,7 +117,8 @@ export const requestFail = (error) => {
 export const fetchTasks = (token, userId) => {
   return (dispatch) => {
     dispatch(fetchTasksStart());
-    const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"';
+    const queryParams =
+      "?auth=" + token + '&orderBy="userId"&equalTo="' + userId + '"';
     axios
       .get(`/tasks.json${queryParams}`)
       .then((res) => {
@@ -129,10 +126,9 @@ export const fetchTasks = (token, userId) => {
         for (const key in res.data) {
           fetchedTasks.unshift({
             id: key,
-            body: res.data[key]
+            body: res.data[key],
           });
         }
-        console.log(res.data)
         dispatch(fetchTasksSuccess(fetchedTasks));
       })
       .catch((err) => {

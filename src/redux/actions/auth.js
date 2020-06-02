@@ -34,12 +34,11 @@ export const logout = () => {
 export const auth = (authData, isSignup) => {
   return (dispatch) => {
     dispatch(authStart());
-    let url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBocpT4UTOvMtflk3PhCCAPi7DAA5oMz6E";
+    const apiKey = process.env.REACT_APP_API_KEY;
+    let url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`;
 
     if (!isSignup) {
-      url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBocpT4UTOvMtflk3PhCCAPi7DAA5oMz6E";
+      url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
     }
     axios
       .post(url, authData)
