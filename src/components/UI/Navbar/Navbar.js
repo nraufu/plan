@@ -30,7 +30,7 @@ const Navbar = (props) => {
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         {props.isAuthenticated ? (
           <ul className="navbar-nav ml-auto">
-            <Link className="nav-item nav-link active">
+            <Link className="nav-item nav-link active" to="#">
               <span className="badge badge-secondary">{taskCompleted}</span>{" "}
               Done
             </Link>
