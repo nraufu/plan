@@ -13,9 +13,10 @@ class Auth extends Component {
       userName: {
         elementConfig: {
           type: "text",
-          placeholder: "Enter Email",
+          placeholder: "Enter Email/UserName",
         },
         value: "",
+        valueType: "Email/UserName",
         validation: {
           required: true,
           isEmail: true,
@@ -30,6 +31,7 @@ class Auth extends Component {
           placeholder: "Enter Password",
         },
         value: "",
+        valueType: "Password",
         validation: {
           required: true,
           minLength: 5,
@@ -133,6 +135,7 @@ class Auth extends Component {
             key={formElement.id}
             elementConfig={formElement.config.elementConfig}
             value={formElement.config.value}
+            valueType={formElement.config.valueType}
             invalid={!formElement.config.valid}
             shouldValidate={formElement.config.validation}
             touched={formElement.config.touched}

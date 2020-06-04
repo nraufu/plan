@@ -3,10 +3,10 @@ import React from "react";
 import Button from "./../../UI/Button/Button";
 
 const Task = (props) => {
-  let doneClasses = "fa fa-thumbs-up";
+  let doneClasses = "fa fa-check-circle";
   let strikeThroughClass = "strikeThrough";
   if (!props.taskDetails.done) {
-    doneClasses = "fa fa-thumbs-o-up";
+    doneClasses = "fa fa-check-circle-o";
     strikeThroughClass = "";
   }
 
@@ -19,7 +19,7 @@ const Task = (props) => {
           </span>
         </p>
         <div className=" text-center">
-          <Button colorType="info" clicked={props.complete}>
+          <Button colorType="dark" clicked={props.complete}>
             <i className={doneClasses}></i>
           </Button>
           <Button colorType="danger" clicked={props.remove}>
