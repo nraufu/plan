@@ -22,7 +22,10 @@ describe("<Navbar>", () => {
   });
 
   it("should render two navigation links if authenticated", () => {
-    wrapper.setProps({ isAuthenticated: true });
+    wrapper.setProps({
+      tasks: [{ id: "idKey", body: { taskToDo: "task", done: false } }],
+      isAuthenticated: true,
+    });
     expect(wrapper.find(Link)).toHaveLength(2);
     expect(wrapper.find("button"));
   });
