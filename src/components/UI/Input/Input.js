@@ -1,10 +1,16 @@
 import React from "react";
 
 const Input = (props) => {
+  let validationError = null;
   let inputClass = ["form-control shadow-none"];
 
   if (props.invalid && props.shouldValidate && props.touched) {
     inputClass.push("border-danger");
+    validationError = (
+      <p className="text-center text-danger">
+        Please Enter a valid {props.valueType}
+      </p>
+    );
   }
 
   return (
@@ -15,6 +21,7 @@ const Input = (props) => {
         value={props.value}
         onChange={props.changed}
       />
+      {validationError}
     </div>
   );
 };
